@@ -10,12 +10,12 @@ export class UsersService {
       {
         id: 1,
         name: 'Qover',
-        password: 'ninja',
+        password: 'Ninja',
       },
     ];
   }
 
   async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.name === username);
+    return this.users.find((user) => user.name.toLowerCase() === username.toLowerCase());
   }
 }

@@ -7,6 +7,6 @@ export class InsuranceController {
 
   @Post('/plans')
   public async calculate(@Body() body: any): Promise<any> {
-    return this.insuranceService.getInsurancePlans(body);
+    return this.insuranceService.getInsurancePlans(body.params);
   }
 }

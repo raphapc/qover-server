@@ -11,9 +11,4 @@ export class CarsController {
     return this.carsService.findAll();
   }
 
-  // @Get(':maker')
-  // findByMaker(@Param() params): Promise<Car> {
-  //   const { maker } = params;
-  //   return this.carsService.findByMaker(maker);
-  // }
 }

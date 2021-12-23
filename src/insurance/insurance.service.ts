@@ -21,36 +21,59 @@ export class InsuranceService {
       title: 'Universe',
       price: { yearly: 0, monthly: 0 },
       maxDuration: '180',
-      medicalReimbursement: '3.000.000',
+      medicalExpanse: '3.000.000',
       personalAssistance: '10.000',
-      travelInsurance: '2.500',
+      travelAssistance: '2.500',
       coverageDuration: '1',
     },
   ];
+
   private _idGlobal = 1;
-  private _idUniverse = 2;
 
-  public async getInsurancePlans({ userAge, maker, carValue }) {
+  public async getInsurancePlans({ age, makerId, purchasePrice }) {
 
-    if (Number(carValue) < 5000) {
+    const errors = [];
+    if (Number(purchasePrice) < 5000) {
+      errors.push({
+        key: 'purchasePrice',
+        message: 'Sorry! The price of the car is too low'
+      });
+    }
+    if (Number(age) < 18) {
+      errors.push(
+        {
+          key: 'age',
+          message: 'Sorry! The driver is too young'
+        });
+    }
+
+    const car = await this.carsService.findById(makerId);
+
+    if (!car) {
+      errors.push(
+        {
+          key: 'maker',
+          message: 'Sorry! Select a Maker'
+        });
+    }
+
+    if (car.maker === 'PORSCHE' && age < 25) {
+      errors.push(
+        {
+          key: 'highRisk',
+          message: 'Sorry! We can not accept this particular risk'
+        });
+    }
+
+    if (errors.length > 0) {
       throw new HttpException(
-        'Sorry! The price of the car is too low',
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: errors,
+        },
         HttpStatus.BAD_REQUEST,
       );
     }
-    if (Number(userAge) < 18) {
-      throw new HttpException(
-        'Sorry! The driver is too young',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    if (maker.toUpperCase() === 'PORSCHE' && userAge < 25) {
-      throw new HttpException(
-        'Sorry! We can not accept this particular risk',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    const car = await this.carsService.findByMaker(maker);
 
     const updatedPlans = this._plans.map((plan) => {
       if (plan.id === this._idGlobal) {
@@ -59,10 +82,10 @@ export class InsuranceService {
       } else {
         plan.price.yearly = (
           car.globalPrice +
-          (car.globalPrice * car.universalPercentage) / 100
+          (purchasePrice * car.universalPercentage) / 100
         )
         plan.price.monthly = (
-          car.globalPrice + (carValue * car.universalPercentage) / 100) / 12
+          car.globalPrice + (purchasePrice * car.universalPercentage) / 100) / 12
       }
       return plan;
     });

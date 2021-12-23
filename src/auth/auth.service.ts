@@ -6,9 +6,12 @@ export class AuthService {
 
   async isValidLogin(userName: string, pass: string): Promise<boolean> {
     const user = await this.usersService.findOne(userName);
-    if (user.password === pass) {
+
+    if (!!user && user?.password === pass) {
       return true;
     }
-    throw new HttpException('Login invalid', HttpStatus.BAD_REQUEST);
+    else {
+      return false;
+    }
   }
 }

@@ -15,6 +15,10 @@ export class CarsService {
     return this._cars.find((car) => car.maker.toUpperCase() === maker.toUpperCase())
   }
 
+  async findById(makerId: number): Promise<Car> {
+    return this._cars.find((car) => car.id === Number(makerId))
+  }
+
   async findAll(): Promise<Car[]> {
     return this._cars;
   }

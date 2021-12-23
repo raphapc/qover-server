@@ -7,6 +7,6 @@ export class AuthController {
 
   @Post('/login')
   async login(@Body() body: any) {
-    return await this.authService.isValidLogin(body.userName, body.password);
+    return await this.authService.isValidLogin(body.username, body.password);
   }
 }
